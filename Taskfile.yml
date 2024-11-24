@@ -1,0 +1,6 @@
+version: 3
+
+vars:
+  ACCOUNTS_SERVICE_ADDRESS: '{{.ACCOUNTS_SERVICE_ADDRESS | default "localhost:50055"}}'
+
+tasks:

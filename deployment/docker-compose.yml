@@ -1,0 +1,44 @@
+services:
+  accounts:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+      - postgres
+    ports:
+      - "50055:50055"
+      - "9099:9099"
+    volumes:
+      - ./config.yml:/root/config.yml
+    restart: unless-stopped
+
+#  rabbitmq:
+#    image: rabbitmq:3-management
+#    container_name: rabbitmq
+#    ports:
+#      - "5672:5672"  # AMQP
+#      - "15672:15672" # Web-UI
+#    environment:
+#      RABBITMQ_DEFAULT_USER: guest
+#      RABBITMQ_DEFAULT_PASS: guest
+#    volumes:
+#      - rabbitmq_data:/var/lib/rabbitmq
+
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: accounts
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+#  rabbitmq_data:
+#    driver: local
+  postgres_data:
+    driver: local

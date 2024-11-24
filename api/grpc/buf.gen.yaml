@@ -1,0 +1,14 @@
+# https://docs.buf.build/configuration/v1/buf-gen-yaml
+version: v1
+plugins:
+  # https://buf.build/plugins
+
+  # Go
+  - plugin: buf.build/grpc/go:v1.5.1
+    out: ../../internal/gen-proto
+    opt:
+      - paths=source_relative
+  - plugin: buf.build/protocolbuffers/go:v1.34.2
+    out: ../../internal/gen-proto
+    opt:
+      - paths=source_relative
