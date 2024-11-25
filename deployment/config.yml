@@ -3,4 +3,4 @@ service:
   port: 50055
 prometheus:
   port: 9099
-database_dsn: "postgres://myuser:mypassword@postgres:5432/accounts?sslmode=disable"
+database_dsn: "postgres://myuser:mypassword@postgres:5432/mydatabase?sslmode=disable"

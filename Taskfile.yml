@@ -2,5 +2,70 @@ version: 3
 
 vars:
   ACCOUNTS_SERVICE_ADDRESS: '{{.ACCOUNTS_SERVICE_ADDRESS | default "localhost:50055"}}'
+  ID: "36C980FB-F1FE-42F4-846A-ADB134027D59"
+  ID2: "46C980FB-F1FE-42F4-846A-ADB134027D50"
+  OWNER_ID: "46C980FB-F1FE-42F4-846A-ADB134027D50"
+  CURRENCY: 1
 
 tasks:
+  lint:
+    cmds:
+      - golangci-lint run --fix  ./...
+  test:
+    cmds:
+      - go test -v ./...
+
+  create-account:
+    desc: Smoke test create account
+    cmds:
+      - |
+        grpcurl -vv -plaintext -d '{
+        "id": "{{.ID}}",
+        "owner_id": "{{.OWNER_ID}}",
+        "currency": {{.CURRENCY}}
+        }' {{.ACCOUNTS_SERVICE_ADDRESS}} accountservice.v1beta1.AccountService.CreateAccount
+
+  create-account2:
+    desc: Smoke test create account
+    cmds:
+      - |
+        grpcurl -vv -plaintext -d '{
+        "id": "{{.ID2}}",
+        "owner_id": "{{.OWNER_ID}}",
+        "currency": {{.CURRENCY}}
+        }' {{.ACCOUNTS_SERVICE_ADDRESS}} accountservice.v1beta1.AccountService.CreateAccount
+
+  get-account:
+    desc: Smoke test get account
+    cmds:
+      - |
+        grpcurl -vv -plaintext -d '{
+        "id": "{{.ID}}"
+        }' {{.ACCOUNTS_SERVICE_ADDRESS}} accountservice.v1beta1.AccountService.GetAccount
+
+  get-account2:
+    desc: Smoke test get account
+    cmds:
+      - |
+        grpcurl -vv -plaintext -d '{
+        "id": "{{.ID2}}"
+        }' {{.ACCOUNTS_SERVICE_ADDRESS}} accountservice.v1beta1.AccountService.GetAccount
+
+  top-up-account:
+    desc: Smoke test top up account
+    cmds:
+      - |
+        grpcurl -vv -plaintext -d '{
+        "id": "{{.ID}}",
+        "amount": 100
+        }' {{.ACCOUNTS_SERVICE_ADDRESS}} accountservice.v1beta1.AccountService.TopUpAccount
+
+  transfer:
+    desc: Smoke test transfer
+    cmds:
+      - |
+        grpcurl -vv -plaintext -d '{
+        "from_account_id": "{{.ID}}",
+        "to_account_id": "{{.ID2}}",
+        "amount": 43
+        }' {{.ACCOUNTS_SERVICE_ADDRESS}} accountservice.v1beta1.AccountService.TransferFunds

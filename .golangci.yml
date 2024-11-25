@@ -102,11 +102,8 @@ linters-settings:
     # Default: false
 #    args-on-sep-lines: true
 
-issues:
-  exclude-files:
-    - ".go"
-
 output:
+  show-stats: true
 
 run:
   # Timeout for analysis, e.g. 30s, 5m.

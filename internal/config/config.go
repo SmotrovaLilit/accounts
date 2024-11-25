@@ -2,9 +2,10 @@ package config
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
-	"strings"
 )
 
 type Service struct {
@@ -17,9 +18,9 @@ type Prometheus struct {
 }
 
 type Config struct {
-	ChallengeService Service    `mapstructure:"service" validate:"required"`
-	Prometheus       Prometheus `mapstructure:"prometheus" validate:"required"`
-	DatabaseDSN      string     `mapstructure:"database_dsn" validate:"required,url"`
+	Service     Service    `mapstructure:"service" validate:"required"`
+	Prometheus  Prometheus `mapstructure:"prometheus" validate:"required"`
+	DatabaseDSN string     `mapstructure:"database_dsn" validate:"required,url"`
 }
 
 func LoadConfig() (*Config, error) {

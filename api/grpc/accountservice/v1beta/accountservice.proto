@@ -2,8 +2,116 @@ syntax = "proto3";
 
 package accountservice.v1beta1;
 
-option go_package = "challengeservice/v1beta1;accountservicepb";
+option go_package = "accountservice/v1beta1;accountservicepb";
 
+// AccountService defines a set of methods to manage accounts,
+// including account creation, balance top-ups, funds transfer,
+// and querying account information.
 service AccountService {
+  // Creates a new account with the specified owner and currency.
+  rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse);
+
+  // Tops up the balance of the specified account.
+  rpc TopUpAccount(TopUpAccountRequest) returns (TopUpAccountResponse);
+
+  // Transfers funds from one account to another.
+  rpc TransferFunds(TransferFundsRequest) returns (TransferFundsResponse);
+
+  // Retrieves account details such as balance, owner ID, and currency.
+  rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
 }
 
+// Request to create a new account.
+message CreateAccountRequest {
+  // Unique identifier for the account.
+  string id = 1;
+
+  // Identifier for the account's owner.
+  string owner_id = 2;
+
+  // The currency of the account.
+  Currency currency = 3;
+}
+
+// Response for creating an account.
+message CreateAccountResponse {}
+
+// Supported currencies for accounts.
+enum Currency {
+  // Unspecified currency (default value).
+  CURRENCY_UNSPECIFIED = 0;
+
+  // United States Dollar (USD).
+  CURRENCY_USD = 1;
+
+  // Euro (EUR).
+  CURRENCY_EUR = 2;
+}
+
+// Request to top up an account's balance.
+message TopUpAccountRequest {
+  // Identifier of the account to top up.
+  string id = 1;
+
+  // Amount to add to the account's balance, in cents.
+  int64 amount = 2;
+}
+
+// Response for topping up an account.
+message TopUpAccountResponse {}
+
+// Request to transfer funds between accounts.
+message TransferFundsRequest {
+  // Identifier of the account from which funds will be transferred.
+  string from_account_id = 1;
+
+  // Identifier of the account to which funds will be transferred.
+  string to_account_id = 2;
+
+  // Amount to transfer, in cents.
+  int64 amount = 3;
+}
+
+// Response for transferring funds.
+message TransferFundsResponse {}
+
+// Request to retrieve details of a specific account.
+message GetAccountRequest {
+  // Identifier of the account to retrieve.
+  string id = 1;
+}
+
+// Response containing account details.
+message GetAccountResponse {
+  // Unique identifier of the account.
+  string id = 1;
+
+  // Identifier of the account's owner.
+  string owner_id = 2;
+
+  // Currency of the account.
+  Currency currency = 3;
+
+  // Current balance of the account, in cents.
+  int64 balance = 4;
+
+  // Date and in ISO 8601 format (e.g., "2024-11-20T15:30:00Z").
+  string created_at = 5;
+
+  // Date and in ISO 8601 format (e.g., "2024-11-20T15:30:00Z").
+  string updated_at = 6;
+}
+
+// ErrorDetails provides details about an error that occurred.
+message ErrorDetails {
+  ErrorCode code = 1;
+  string message = 2;
+}
+
+// ErrorCode represents an error code that can be returned in ErrorDetails.
+enum ErrorCode {
+  ERROR_CODE_UNSPECIFIED = 0;
+  ERROR_CODE_INVALID_ACCOUNT_ID = 1;
+  ERROR_CODE_INVALID_OWNER_ID = 2;
+  ERROR_CODE_INVALID_CURRENCY = 3;
+}

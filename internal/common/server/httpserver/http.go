@@ -1,10 +1,14 @@
 package httpserver
 
 import (
-	"github.com/go-chi/chi/v5"
 	"net/http"
 	"os"
 	"strings"
+	"time"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
+	"github.com/go-chi/chi/v5"
 
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -17,15 +21,23 @@ func RunHTTPServerOnAddr(addr string, createHandler func(router chi.Router) http
 	rootRouter := chi.NewRouter()
 	// we are mounting all APIs under /api path
 	rootRouter.Mount("/api", createHandler(apiRouter))
+	server := &http.Server{
+		Addr:              addr,
+		Handler:           promhttp.Handler(),
+		ReadHeaderTimeout: 5 * time.Second, // TODO make configurable
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      10 * time.Second,
+		IdleTimeout:       120 * time.Second,
+	}
 
-	return http.ListenAndServe(addr, rootRouter)
+	return server.ListenAndServe()
 }
 
 func setMiddlewares(router *chi.Mux) {
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
 	// TODO setup logging middleware
-	//router.Use()
+	// router.Use()
 	router.Use(middleware.Recoverer)
 
 	addCorsMiddleware(router)

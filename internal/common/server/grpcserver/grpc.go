@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
-	"github.com/grpc-ecosystem/go-grpc-prometheus"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/oklog/run"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
@@ -50,21 +50,21 @@ func (s *Server) Run() error {
 	if err != nil {
 		return fmt.Errorf("failed to listen %s: %w", s.Addr, err)
 	}
-
-	slog.Info("starting grpc server", slog.String("address", s.Addr))
+	ctx := context.Background()
+	slog.InfoContext(ctx, "starting grpc server", slog.String("address", s.Addr))
 	err = s.server.Serve(listener)
 	if errors.Is(err, grpc.ErrServerStopped) {
 		return nil
 	}
 	if err != nil {
-		slog.Error("failed to start grpc server", slog.Any("error", err))
+		slog.ErrorContext(ctx, "failed to start grpc server", slog.Any("error", err))
 		return err
 	}
 	return nil
 }
 
 func (s *Server) Shutdown(ctx context.Context) error {
-	slog.Info("shutting down grpc server gracefully")
+	slog.InfoContext(ctx, "shutting down grpc server gracefully")
 	done := make(chan struct{})
 	go func() {
 		s.server.GracefulStop()
@@ -73,10 +73,10 @@ func (s *Server) Shutdown(ctx context.Context) error {
 
 	select {
 	case <-done:
-		slog.Info("grpc server shut down gracefully")
+		slog.InfoContext(ctx, "grpc server shut down gracefully")
 		return nil
 	case <-ctx.Done():
-		slog.Info("grpc server graceful shutdown timed out, forcing shutdown")
+		slog.InfoContext(ctx, "grpc server graceful shutdown timed out, forcing shutdown")
 		s.server.Stop()
 		return nil
 	}
@@ -94,7 +94,7 @@ func RunWithGroup(
 		Opts:           opts,
 	}
 	g.Add(
-		func() error { return grpcSrv.Run() },
+		grpcSrv.Run,
 		func(error) {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()

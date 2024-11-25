@@ -1,6 +1,19 @@
 package main
 
 import (
+	"context"
+	"fmt"
+	"log"
+	"log/slog"
+	"os"
+	"os/signal"
+	"syscall"
+
+	_ "github.com/lib/pq"
+	"github.com/oklog/run"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
+
 	"accounts/internal/common/logging"
 	"accounts/internal/common/prometheus"
 	"accounts/internal/common/server/grpcserver"
@@ -8,16 +21,6 @@ import (
 	pb "accounts/internal/gen-proto/accountservice/v1beta"
 	"accounts/internal/ports"
 	"accounts/internal/service"
-	"context"
-	"fmt"
-	"github.com/oklog/run"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
-	"log"
-	"log/slog"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 func main() {
@@ -42,7 +45,7 @@ func main() {
 	// of running and gracefully shutting down a server is common for different microservices
 	prometheus.RunWithGroup(g, fmt.Sprintf(":%d", conf.Prometheus.Port))
 	grpcserver.RunWithGroup(g,
-		fmt.Sprintf("%s:%d", conf.ChallengeService.Host, conf.ChallengeService.Port),
+		fmt.Sprintf("%s:%d", conf.Service.Host, conf.Service.Port),
 		func(server *grpc.Server) {
 			svc := ports.NewGRPCServer(application)
 			reflection.Register(server)
@@ -50,11 +53,11 @@ func main() {
 		},
 	)
 
-	sigs := make(chan os.Signal)
+	sigs := make(chan os.Signal, 1)
 	g.Add(func() error {
 		signal.Notify(sigs, os.Interrupt, syscall.SIGTERM)
 		sig := <-sigs
-		slog.Info("received signal", slog.Any("signal", sig))
+		slog.InfoContext(ctx, "received signal", slog.Any("signal", sig))
 		return nil
 	}, func(error) {
 		signal.Stop(sigs)
@@ -63,6 +66,6 @@ func main() {
 
 	err = g.Run()
 	if err != nil {
-		log.Fatal(err)
+		slog.ErrorContext(ctx, "application encountered an error", slog.Any("error", err))
 	}
 }

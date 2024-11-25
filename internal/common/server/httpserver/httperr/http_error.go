@@ -24,7 +24,7 @@ func ValidationError(err error, w http.ResponseWriter, r *http.Request) {
 }
 
 func httpRespondWithError(err error, code, message string, w http.ResponseWriter, r *http.Request, status int) {
-	slog.With("error-code", code, "err", err.Error()).Warn(message) // TODO Think about level later
+	slog.With("error_code", code, "err", err.Error()).WarnContext(r.Context(), message) // TODO Think about level later
 	resp := ErrorResponse{code, message, status}
 
 	if err := render.Render(w, r, resp); err != nil {
@@ -38,7 +38,7 @@ type ErrorResponse struct {
 	httpStatus int
 }
 
-func (e ErrorResponse) Render(w http.ResponseWriter, r *http.Request) error {
+func (e ErrorResponse) Render(w http.ResponseWriter, _ *http.Request) error {
 	w.WriteHeader(e.httpStatus)
 	return nil
 }

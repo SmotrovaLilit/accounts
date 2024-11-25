@@ -2,13 +2,14 @@ package grpcserver
 
 import (
 	"context"
+
 	"golang.org/x/time/rate"
 	"google.golang.org/grpc"
 	grpccodes "google.golang.org/grpc/codes"
 	grpcstatus "google.golang.org/grpc/status"
 )
 
-// rateLimiter struct to hold the rate limiter
+// rateLimiter struct to hold the rate limiter.
 type rateLimiter struct {
 	limiter *rate.Limiter
 }
@@ -26,8 +27,8 @@ func newRateLimiter(limit, burst int) *rateLimiter {
 	}
 }
 
-// unaryRateLimiterInterceptor intercepts unary requests for rate limiting
-func (rl *rateLimiter) unaryRateLimiterInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
+// unaryRateLimiterInterceptor intercepts unary requests for rate limiting.
+func (rl *rateLimiter) unaryRateLimiterInterceptor(ctx context.Context, req any, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
 	// Rate limiting
 	if !rl.limiter.Allow() {
 		return nil, grpcstatus.Errorf(

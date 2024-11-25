@@ -2,11 +2,12 @@ package grpcclient
 
 import (
 	"context"
+
 	"golang.org/x/time/rate"
 	"google.golang.org/grpc"
 )
 
-// rateLimiter struct to hold the rate limiter
+// rateLimiter struct to hold the rate limiter.
 type rateLimiter struct {
 	limiter *rate.Limiter
 }

@@ -2,11 +2,12 @@ package amqpserver
 
 import (
 	"context"
+	"log/slog"
+
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill-amqp/v3/pkg/amqp"
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/oklog/run"
-	"log/slog"
 )
 
 type HandlerFunc func(ctx context.Context, msg *message.Message) error

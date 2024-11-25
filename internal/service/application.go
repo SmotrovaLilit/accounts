@@ -1,28 +1,34 @@
 package service
 
 import (
-	"accounts/internal/app"
-	"accounts/internal/config"
 	"context"
 	"os"
 	"runtime/debug"
+
+	"accounts/internal/adapters"
+	"accounts/internal/app"
+	"accounts/internal/app/commands"
+	"accounts/internal/app/query"
+	"accounts/internal/config"
 )
 
 func NewApplication(_ context.Context, conf *config.Config) (a app.Application, callback func(), err error) {
 	buildInfo, _ := debug.ReadBuildInfo()
 	pid := os.Getpid()
 
-	//accountRepository, err := adapters.NewPostgresSolutionRepository(conf.DatabaseDSN)
-	//if err != nil {
-	//	return app.Application{}, nil, err
-	//}
+	accountRepository, err := adapters.NewPostgresAccountRepository(conf.DatabaseDSN)
+	if err != nil {
+		return app.Application{}, nil, err
+	}
 
 	return app.Application{
 			Commands: app.Commands{
-				// TODO  add commands
+				CreateAccount: commands.NewCreateAccountHandler(accountRepository),
+				TopUpAccount:  commands.NewTopUpAccountHandler(accountRepository),
+				TransferFunds: commands.NewTransferFundsHandler(accountRepository),
 			},
 			Queries: app.Queries{
-				// TODO add queries
+				GetAccount: query.NewGetAccountQueryHandler(accountRepository),
 			},
 			Info: app.Info{
 				Name:      "accounts",

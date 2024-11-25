@@ -10,6 +10,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
+	sync "sync"
 )
 
 const (
@@ -19,6 +20,620 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Supported currencies for accounts.
+type Currency int32
+
+const (
+	// Unspecified currency (default value).
+	Currency_CURRENCY_UNSPECIFIED Currency = 0
+	// United States Dollar (USD).
+	Currency_CURRENCY_USD Currency = 1
+	// Euro (EUR).
+	Currency_CURRENCY_EUR Currency = 2
+)
+
+// Enum value maps for Currency.
+var (
+	Currency_name = map[int32]string{
+		0: "CURRENCY_UNSPECIFIED",
+		1: "CURRENCY_USD",
+		2: "CURRENCY_EUR",
+	}
+	Currency_value = map[string]int32{
+		"CURRENCY_UNSPECIFIED": 0,
+		"CURRENCY_USD":         1,
+		"CURRENCY_EUR":         2,
+	}
+)
+
+func (x Currency) Enum() *Currency {
+	p := new(Currency)
+	*p = x
+	return p
+}
+
+func (x Currency) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Currency) Descriptor() protoreflect.EnumDescriptor {
+	return file_accountservice_v1beta_accountservice_proto_enumTypes[0].Descriptor()
+}
+
+func (Currency) Type() protoreflect.EnumType {
+	return &file_accountservice_v1beta_accountservice_proto_enumTypes[0]
+}
+
+func (x Currency) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Currency.Descriptor instead.
+func (Currency) EnumDescriptor() ([]byte, []int) {
+	return file_accountservice_v1beta_accountservice_proto_rawDescGZIP(), []int{0}
+}
+
+// ErrorCode represents an error code that can be returned in ErrorDetails.
+type ErrorCode int32
+
+const (
+	ErrorCode_ERROR_CODE_UNSPECIFIED        ErrorCode = 0
+	ErrorCode_ERROR_CODE_INVALID_ACCOUNT_ID ErrorCode = 1
+	ErrorCode_ERROR_CODE_INVALID_OWNER_ID   ErrorCode = 2
+	ErrorCode_ERROR_CODE_INVALID_CURRENCY   ErrorCode = 3
+)
+
+// Enum value maps for ErrorCode.
+var (
+	ErrorCode_name = map[int32]string{
+		0: "ERROR_CODE_UNSPECIFIED",
+		1: "ERROR_CODE_INVALID_ACCOUNT_ID",
+		2: "ERROR_CODE_INVALID_OWNER_ID",
+		3: "ERROR_CODE_INVALID_CURRENCY",
+	}
+	ErrorCode_value = map[string]int32{
+		"ERROR_CODE_UNSPECIFIED":        0,
+		"ERROR_CODE_INVALID_ACCOUNT_ID": 1,
+		"ERROR_CODE_INVALID_OWNER_ID":   2,
+		"ERROR_CODE_INVALID_CURRENCY":   3,
+	}
+)
+
+func (x ErrorCode) Enum() *ErrorCode {
+	p := new(ErrorCode)
+	*p = x
+	return p
+}
+
+func (x ErrorCode) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ErrorCode) Descriptor() protoreflect.EnumDescriptor {
+	return file_accountservice_v1beta_accountservice_proto_enumTypes[1].Descriptor()
+}
+
+func (ErrorCode) Type() protoreflect.EnumType {
+	return &file_accountservice_v1beta_accountservice_proto_enumTypes[1]
+}
+
+func (x ErrorCode) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ErrorCode.Descriptor instead.
+func (ErrorCode) EnumDescriptor() ([]byte, []int) {
+	return file_accountservice_v1beta_accountservice_proto_rawDescGZIP(), []int{1}
+}
+
+// Request to create a new account.
+type CreateAccountRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Unique identifier for the account.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Identifier for the account's owner.
+	OwnerId string `protobuf:"bytes,2,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	// The currency of the account.
+	Currency Currency `protobuf:"varint,3,opt,name=currency,proto3,enum=accountservice.v1beta1.Currency" json:"currency,omitempty"`
+}
+
+func (x *CreateAccountRequest) Reset() {
+	*x = CreateAccountRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateAccountRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAccountRequest) ProtoMessage() {}
+
+func (x *CreateAccountRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateAccountRequest.ProtoReflect.Descriptor instead.
+func (*CreateAccountRequest) Descriptor() ([]byte, []int) {
+	return file_accountservice_v1beta_accountservice_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *CreateAccountRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *CreateAccountRequest) GetOwnerId() string {
+	if x != nil {
+		return x.OwnerId
+	}
+	return ""
+}
+
+func (x *CreateAccountRequest) GetCurrency() Currency {
+	if x != nil {
+		return x.Currency
+	}
+	return Currency_CURRENCY_UNSPECIFIED
+}
+
+// Response for creating an account.
+type CreateAccountResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *CreateAccountResponse) Reset() {
+	*x = CreateAccountResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateAccountResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAccountResponse) ProtoMessage() {}
+
+func (x *CreateAccountResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateAccountResponse.ProtoReflect.Descriptor instead.
+func (*CreateAccountResponse) Descriptor() ([]byte, []int) {
+	return file_accountservice_v1beta_accountservice_proto_rawDescGZIP(), []int{1}
+}
+
+// Request to top up an account's balance.
+type TopUpAccountRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Identifier of the account to top up.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Amount to add to the account's balance, in cents.
+	Amount int64 `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
+}
+
+func (x *TopUpAccountRequest) Reset() {
+	*x = TopUpAccountRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *TopUpAccountRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TopUpAccountRequest) ProtoMessage() {}
+
+func (x *TopUpAccountRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TopUpAccountRequest.ProtoReflect.Descriptor instead.
+func (*TopUpAccountRequest) Descriptor() ([]byte, []int) {
+	return file_accountservice_v1beta_accountservice_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *TopUpAccountRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *TopUpAccountRequest) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+// Response for topping up an account.
+type TopUpAccountResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *TopUpAccountResponse) Reset() {
+	*x = TopUpAccountResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *TopUpAccountResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TopUpAccountResponse) ProtoMessage() {}
+
+func (x *TopUpAccountResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TopUpAccountResponse.ProtoReflect.Descriptor instead.
+func (*TopUpAccountResponse) Descriptor() ([]byte, []int) {
+	return file_accountservice_v1beta_accountservice_proto_rawDescGZIP(), []int{3}
+}
+
+// Request to transfer funds between accounts.
+type TransferFundsRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Identifier of the account from which funds will be transferred.
+	FromAccountId string `protobuf:"bytes,1,opt,name=from_account_id,json=fromAccountId,proto3" json:"from_account_id,omitempty"`
+	// Identifier of the account to which funds will be transferred.
+	ToAccountId string `protobuf:"bytes,2,opt,name=to_account_id,json=toAccountId,proto3" json:"to_account_id,omitempty"`
+	// Amount to transfer, in cents.
+	Amount int64 `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
+}
+
+func (x *TransferFundsRequest) Reset() {
+	*x = TransferFundsRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *TransferFundsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TransferFundsRequest) ProtoMessage() {}
+
+func (x *TransferFundsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TransferFundsRequest.ProtoReflect.Descriptor instead.
+func (*TransferFundsRequest) Descriptor() ([]byte, []int) {
+	return file_accountservice_v1beta_accountservice_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *TransferFundsRequest) GetFromAccountId() string {
+	if x != nil {
+		return x.FromAccountId
+	}
+	return ""
+}
+
+func (x *TransferFundsRequest) GetToAccountId() string {
+	if x != nil {
+		return x.ToAccountId
+	}
+	return ""
+}
+
+func (x *TransferFundsRequest) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+// Response for transferring funds.
+type TransferFundsResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *TransferFundsResponse) Reset() {
+	*x = TransferFundsResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *TransferFundsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TransferFundsResponse) ProtoMessage() {}
+
+func (x *TransferFundsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TransferFundsResponse.ProtoReflect.Descriptor instead.
+func (*TransferFundsResponse) Descriptor() ([]byte, []int) {
+	return file_accountservice_v1beta_accountservice_proto_rawDescGZIP(), []int{5}
+}
+
+// Request to retrieve details of a specific account.
+type GetAccountRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Identifier of the account to retrieve.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *GetAccountRequest) Reset() {
+	*x = GetAccountRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAccountRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAccountRequest) ProtoMessage() {}
+
+func (x *GetAccountRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAccountRequest.ProtoReflect.Descriptor instead.
+func (*GetAccountRequest) Descriptor() ([]byte, []int) {
+	return file_accountservice_v1beta_accountservice_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GetAccountRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+// Response containing account details.
+type GetAccountResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Unique identifier of the account.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Identifier of the account's owner.
+	OwnerId string `protobuf:"bytes,2,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	// Currency of the account.
+	Currency Currency `protobuf:"varint,3,opt,name=currency,proto3,enum=accountservice.v1beta1.Currency" json:"currency,omitempty"`
+	// Current balance of the account, in cents.
+	Balance int64 `protobuf:"varint,4,opt,name=balance,proto3" json:"balance,omitempty"`
+	// Date and in ISO 8601 format (e.g., "2024-11-20T15:30:00Z").
+	CreatedAt string `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// Date and in ISO 8601 format (e.g., "2024-11-20T15:30:00Z").
+	UpdatedAt string `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+}
+
+func (x *GetAccountResponse) Reset() {
+	*x = GetAccountResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAccountResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAccountResponse) ProtoMessage() {}
+
+func (x *GetAccountResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAccountResponse.ProtoReflect.Descriptor instead.
+func (*GetAccountResponse) Descriptor() ([]byte, []int) {
+	return file_accountservice_v1beta_accountservice_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GetAccountResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *GetAccountResponse) GetOwnerId() string {
+	if x != nil {
+		return x.OwnerId
+	}
+	return ""
+}
+
+func (x *GetAccountResponse) GetCurrency() Currency {
+	if x != nil {
+		return x.Currency
+	}
+	return Currency_CURRENCY_UNSPECIFIED
+}
+
+func (x *GetAccountResponse) GetBalance() int64 {
+	if x != nil {
+		return x.Balance
+	}
+	return 0
+}
+
+func (x *GetAccountResponse) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *GetAccountResponse) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+// ErrorDetails provides details about an error that occurred.
+type ErrorDetails struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code    ErrorCode `protobuf:"varint,1,opt,name=code,proto3,enum=accountservice.v1beta1.ErrorCode" json:"code,omitempty"`
+	Message string    `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+}
+
+func (x *ErrorDetails) Reset() {
+	*x = ErrorDetails{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ErrorDetails) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ErrorDetails) ProtoMessage() {}
+
+func (x *ErrorDetails) ProtoReflect() protoreflect.Message {
+	mi := &file_accountservice_v1beta_accountservice_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ErrorDetails.ProtoReflect.Descriptor instead.
+func (*ErrorDetails) Descriptor() ([]byte, []int) {
+	return file_accountservice_v1beta_accountservice_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ErrorDetails) GetCode() ErrorCode {
+	if x != nil {
+		return x.Code
+	}
+	return ErrorCode_ERROR_CODE_UNSPECIFIED
+}
+
+func (x *ErrorDetails) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_accountservice_v1beta_accountservice_proto protoreflect.FileDescriptor
 
 var file_accountservice_v1beta_accountservice_proto_rawDesc = []byte{
@@ -26,20 +641,144 @@ var file_accountservice_v1beta_accountservice_proto_rawDesc = []byte{
 	0x2f, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x2f, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73,
 	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x16, 0x61, 0x63,
 	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x62,
-	0x65, 0x74, 0x61, 0x31, 0x32, 0x10, 0x0a, 0x0e, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x53,
-	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x42, 0x2b, 0x5a, 0x29, 0x63, 0x68, 0x61, 0x6c, 0x6c, 0x65,
-	0x6e, 0x67, 0x65, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2f, 0x76, 0x31, 0x62, 0x65, 0x74,
-	0x61, 0x31, 0x3b, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
-	0x65, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x74, 0x61, 0x31, 0x22, 0x7f, 0x0a, 0x14, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x41, 0x63,
+	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x19, 0x0a, 0x08,
+	0x6f, 0x77, 0x6e, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07,
+	0x6f, 0x77, 0x6e, 0x65, 0x72, 0x49, 0x64, 0x12, 0x3c, 0x0a, 0x08, 0x63, 0x75, 0x72, 0x72, 0x65,
+	0x6e, 0x63, 0x79, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x20, 0x2e, 0x61, 0x63, 0x63, 0x6f,
+	0x75, 0x6e, 0x74, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74,
+	0x61, 0x31, 0x2e, 0x43, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x63, 0x79, 0x52, 0x08, 0x63, 0x75, 0x72,
+	0x72, 0x65, 0x6e, 0x63, 0x79, 0x22, 0x17, 0x0a, 0x15, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x41,
+	0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x3d,
+	0x0a, 0x13, 0x54, 0x6f, 0x70, 0x55, 0x70, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x22, 0x16, 0x0a,
+	0x14, 0x54, 0x6f, 0x70, 0x55, 0x70, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x7a, 0x0a, 0x14, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65,
+	0x72, 0x46, 0x75, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x26, 0x0a,
+	0x0f, 0x66, 0x72, 0x6f, 0x6d, 0x5f, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x5f, 0x69, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x66, 0x72, 0x6f, 0x6d, 0x41, 0x63, 0x63, 0x6f,
+	0x75, 0x6e, 0x74, 0x49, 0x64, 0x12, 0x22, 0x0a, 0x0d, 0x74, 0x6f, 0x5f, 0x61, 0x63, 0x63, 0x6f,
+	0x75, 0x6e, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x74, 0x6f,
+	0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x49, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x6d, 0x6f,
+	0x75, 0x6e, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e,
+	0x74, 0x22, 0x17, 0x0a, 0x15, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x46, 0x75, 0x6e,
+	0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x23, 0x0a, 0x11, 0x47, 0x65,
+	0x74, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22,
+	0xd5, 0x01, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x19, 0x0a, 0x08, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x5f,
+	0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x49,
+	0x64, 0x12, 0x3c, 0x0a, 0x08, 0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x63, 0x79, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x0e, 0x32, 0x20, 0x2e, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43, 0x75, 0x72,
+	0x72, 0x65, 0x6e, 0x63, 0x79, 0x52, 0x08, 0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x63, 0x79, 0x12,
+	0x18, 0x0a, 0x07, 0x62, 0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x03,
+	0x52, 0x07, 0x62, 0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x12, 0x1d, 0x0a, 0x0a, 0x63, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x63,
+	0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x75, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x75, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x22, 0x5f, 0x0a, 0x0c, 0x45, 0x72, 0x72, 0x6f, 0x72,
+	0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x73, 0x12, 0x35, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x21, 0x2e, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x45,
+	0x72, 0x72, 0x6f, 0x72, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x12, 0x18,
+	0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x2a, 0x48, 0x0a, 0x08, 0x43, 0x75, 0x72, 0x72,
+	0x65, 0x6e, 0x63, 0x79, 0x12, 0x18, 0x0a, 0x14, 0x43, 0x55, 0x52, 0x52, 0x45, 0x4e, 0x43, 0x59,
+	0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12, 0x10,
+	0x0a, 0x0c, 0x43, 0x55, 0x52, 0x52, 0x45, 0x4e, 0x43, 0x59, 0x5f, 0x55, 0x53, 0x44, 0x10, 0x01,
+	0x12, 0x10, 0x0a, 0x0c, 0x43, 0x55, 0x52, 0x52, 0x45, 0x4e, 0x43, 0x59, 0x5f, 0x45, 0x55, 0x52,
+	0x10, 0x02, 0x2a, 0x8c, 0x01, 0x0a, 0x09, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x43, 0x6f, 0x64, 0x65,
+	0x12, 0x1a, 0x0a, 0x16, 0x45, 0x52, 0x52, 0x4f, 0x52, 0x5f, 0x43, 0x4f, 0x44, 0x45, 0x5f, 0x55,
+	0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12, 0x21, 0x0a, 0x1d,
+	0x45, 0x52, 0x52, 0x4f, 0x52, 0x5f, 0x43, 0x4f, 0x44, 0x45, 0x5f, 0x49, 0x4e, 0x56, 0x41, 0x4c,
+	0x49, 0x44, 0x5f, 0x41, 0x43, 0x43, 0x4f, 0x55, 0x4e, 0x54, 0x5f, 0x49, 0x44, 0x10, 0x01, 0x12,
+	0x1f, 0x0a, 0x1b, 0x45, 0x52, 0x52, 0x4f, 0x52, 0x5f, 0x43, 0x4f, 0x44, 0x45, 0x5f, 0x49, 0x4e,
+	0x56, 0x41, 0x4c, 0x49, 0x44, 0x5f, 0x4f, 0x57, 0x4e, 0x45, 0x52, 0x5f, 0x49, 0x44, 0x10, 0x02,
+	0x12, 0x1f, 0x0a, 0x1b, 0x45, 0x52, 0x52, 0x4f, 0x52, 0x5f, 0x43, 0x4f, 0x44, 0x45, 0x5f, 0x49,
+	0x4e, 0x56, 0x41, 0x4c, 0x49, 0x44, 0x5f, 0x43, 0x55, 0x52, 0x52, 0x45, 0x4e, 0x43, 0x59, 0x10,
+	0x03, 0x32, 0xbc, 0x03, 0x0a, 0x0e, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x53, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x12, 0x6c, 0x0a, 0x0d, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x41, 0x63,
+	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x2c, 0x2e, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43,
+	0x72, 0x65, 0x61, 0x74, 0x65, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x2d, 0x2e, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x43, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x12, 0x69, 0x0a, 0x0c, 0x54, 0x6f, 0x70, 0x55, 0x70, 0x41, 0x63, 0x63, 0x6f, 0x75,
+	0x6e, 0x74, 0x12, 0x2b, 0x2e, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x54, 0x6f, 0x70, 0x55,
+	0x70, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x2c, 0x2e, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
+	0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x54, 0x6f, 0x70, 0x55, 0x70, 0x41, 0x63,
+	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x6c, 0x0a,
+	0x0d, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x46, 0x75, 0x6e, 0x64, 0x73, 0x12, 0x2c,
+	0x2e, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e,
+	0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72,
+	0x46, 0x75, 0x6e, 0x64, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2d, 0x2e, 0x61,
+	0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31,
+	0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x66, 0x65, 0x72, 0x46, 0x75,
+	0x6e, 0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x63, 0x0a, 0x0a, 0x47,
+	0x65, 0x74, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x29, 0x2e, 0x61, 0x63, 0x63, 0x6f,
+	0x75, 0x6e, 0x74, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74,
+	0x61, 0x31, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x2a, 0x2e, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x47, 0x65,
+	0x74, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x42, 0x29, 0x5a, 0x27, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x73, 0x65, 0x72, 0x76, 0x69,
+	0x63, 0x65, 0x2f, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x3b, 0x61, 0x63, 0x63, 0x6f, 0x75,
+	0x6e, 0x74, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
-var file_accountservice_v1beta_accountservice_proto_goTypes = []any{}
+var (
+	file_accountservice_v1beta_accountservice_proto_rawDescOnce sync.Once
+	file_accountservice_v1beta_accountservice_proto_rawDescData = file_accountservice_v1beta_accountservice_proto_rawDesc
+)
+
+func file_accountservice_v1beta_accountservice_proto_rawDescGZIP() []byte {
+	file_accountservice_v1beta_accountservice_proto_rawDescOnce.Do(func() {
+		file_accountservice_v1beta_accountservice_proto_rawDescData = protoimpl.X.CompressGZIP(file_accountservice_v1beta_accountservice_proto_rawDescData)
+	})
+	return file_accountservice_v1beta_accountservice_proto_rawDescData
+}
+
+var file_accountservice_v1beta_accountservice_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_accountservice_v1beta_accountservice_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_accountservice_v1beta_accountservice_proto_goTypes = []any{
+	(Currency)(0),                 // 0: accountservice.v1beta1.Currency
+	(ErrorCode)(0),                // 1: accountservice.v1beta1.ErrorCode
+	(*CreateAccountRequest)(nil),  // 2: accountservice.v1beta1.CreateAccountRequest
+	(*CreateAccountResponse)(nil), // 3: accountservice.v1beta1.CreateAccountResponse
+	(*TopUpAccountRequest)(nil),   // 4: accountservice.v1beta1.TopUpAccountRequest
+	(*TopUpAccountResponse)(nil),  // 5: accountservice.v1beta1.TopUpAccountResponse
+	(*TransferFundsRequest)(nil),  // 6: accountservice.v1beta1.TransferFundsRequest
+	(*TransferFundsResponse)(nil), // 7: accountservice.v1beta1.TransferFundsResponse
+	(*GetAccountRequest)(nil),     // 8: accountservice.v1beta1.GetAccountRequest
+	(*GetAccountResponse)(nil),    // 9: accountservice.v1beta1.GetAccountResponse
+	(*ErrorDetails)(nil),          // 10: accountservice.v1beta1.ErrorDetails
+}
 var file_accountservice_v1beta_accountservice_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: accountservice.v1beta1.CreateAccountRequest.currency:type_name -> accountservice.v1beta1.Currency
+	0, // 1: accountservice.v1beta1.GetAccountResponse.currency:type_name -> accountservice.v1beta1.Currency
+	1, // 2: accountservice.v1beta1.ErrorDetails.code:type_name -> accountservice.v1beta1.ErrorCode
+	2, // 3: accountservice.v1beta1.AccountService.CreateAccount:input_type -> accountservice.v1beta1.CreateAccountRequest
+	4, // 4: accountservice.v1beta1.AccountService.TopUpAccount:input_type -> accountservice.v1beta1.TopUpAccountRequest
+	6, // 5: accountservice.v1beta1.AccountService.TransferFunds:input_type -> accountservice.v1beta1.TransferFundsRequest
+	8, // 6: accountservice.v1beta1.AccountService.GetAccount:input_type -> accountservice.v1beta1.GetAccountRequest
+	3, // 7: accountservice.v1beta1.AccountService.CreateAccount:output_type -> accountservice.v1beta1.CreateAccountResponse
+	5, // 8: accountservice.v1beta1.AccountService.TopUpAccount:output_type -> accountservice.v1beta1.TopUpAccountResponse
+	7, // 9: accountservice.v1beta1.AccountService.TransferFunds:output_type -> accountservice.v1beta1.TransferFundsResponse
+	9, // 10: accountservice.v1beta1.AccountService.GetAccount:output_type -> accountservice.v1beta1.GetAccountResponse
+	7, // [7:11] is the sub-list for method output_type
+	3, // [3:7] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_accountservice_v1beta_accountservice_proto_init() }
@@ -47,18 +786,130 @@ func file_accountservice_v1beta_accountservice_proto_init() {
 	if File_accountservice_v1beta_accountservice_proto != nil {
 		return
 	}
+	if !protoimpl.UnsafeEnabled {
+		file_accountservice_v1beta_accountservice_proto_msgTypes[0].Exporter = func(v any, i int) any {
+			switch v := v.(*CreateAccountRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accountservice_v1beta_accountservice_proto_msgTypes[1].Exporter = func(v any, i int) any {
+			switch v := v.(*CreateAccountResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accountservice_v1beta_accountservice_proto_msgTypes[2].Exporter = func(v any, i int) any {
+			switch v := v.(*TopUpAccountRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accountservice_v1beta_accountservice_proto_msgTypes[3].Exporter = func(v any, i int) any {
+			switch v := v.(*TopUpAccountResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accountservice_v1beta_accountservice_proto_msgTypes[4].Exporter = func(v any, i int) any {
+			switch v := v.(*TransferFundsRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accountservice_v1beta_accountservice_proto_msgTypes[5].Exporter = func(v any, i int) any {
+			switch v := v.(*TransferFundsResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accountservice_v1beta_accountservice_proto_msgTypes[6].Exporter = func(v any, i int) any {
+			switch v := v.(*GetAccountRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accountservice_v1beta_accountservice_proto_msgTypes[7].Exporter = func(v any, i int) any {
+			switch v := v.(*GetAccountResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_accountservice_v1beta_accountservice_proto_msgTypes[8].Exporter = func(v any, i int) any {
+			switch v := v.(*ErrorDetails); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_accountservice_v1beta_accountservice_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   0,
+			NumEnums:      2,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_accountservice_v1beta_accountservice_proto_goTypes,
 		DependencyIndexes: file_accountservice_v1beta_accountservice_proto_depIdxs,
+		EnumInfos:         file_accountservice_v1beta_accountservice_proto_enumTypes,
+		MessageInfos:      file_accountservice_v1beta_accountservice_proto_msgTypes,
 	}.Build()
 	File_accountservice_v1beta_accountservice_proto = out.File
 	file_accountservice_v1beta_accountservice_proto_rawDesc = nil

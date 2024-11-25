@@ -2,11 +2,12 @@ package grpcclient
 
 import (
 	"fmt"
+
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
-	//"time"
+	// "time".
 )
 
 func NewClient(

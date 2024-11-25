@@ -1,17 +1,22 @@
 package app
 
 import (
-	"accounts/internal/common/logging"
 	"context"
 	"log/slog"
+
+	"accounts/internal/app/commands"
+	"accounts/internal/app/query"
+	"accounts/internal/common/logging"
 )
 
+// Application is an application.
 type Application struct {
 	Commands Commands
 	Queries  Queries
 	Info     Info
 }
 
+// Info is an application info.
 type Info struct {
 	Name      string
 	Version   string
@@ -20,12 +25,19 @@ type Info struct {
 	PID       int
 }
 
+// Commands is a set of commands.
 type Commands struct {
+	CreateAccount commands.CreateAccountHandler
+	TopUpAccount  commands.TopUpAccountHandler
+	TransferFunds commands.TransferFundsHandler
 }
 
+// Queries is a set of queries.
 type Queries struct {
+	GetAccount query.GetAccountQueryHandler
 }
 
+// AppendCtxWithApplicationLoggingFields appends application logging fields to the context.
 func (ap Application) AppendCtxWithApplicationLoggingFields(ctx context.Context) context.Context {
 	return logging.AppendCtx(
 		ctx,
