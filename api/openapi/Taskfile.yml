@@ -1,0 +1,18 @@
+version: 3
+tasks:
+  install-oapi-codegen:
+    desc: Install oapi-codegen
+    cmds:
+      - go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+
+  generate-api:
+    desc: Generate Go client and server from OpenAPI schema
+    vars:
+      OUTPUT_DIR: "../../internal/gen-openapi"
+      SCHEMA: "api.yml"
+    cmds:
+      - mkdir -p "{{.OUTPUT_DIR}}/server"
+      - mkdir -p "{{.OUTPUT_DIR}}/client"
+      - oapi-codegen -generate types -o "{{.OUTPUT_DIR}}/server/openapi_types.gen.go" -package "server" "{{.SCHEMA}}"
+      - oapi-codegen -generate chi-server -o "{{.OUTPUT_DIR}}/server/openapi_api.gen.go" -package "server" "{{.SCHEMA}}"
+      - oapi-codegen -config clientcfg.yml api.yml

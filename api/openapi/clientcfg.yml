@@ -1,0 +1,5 @@
+package: client
+output: ../../internal/gen-openapi/client/client.gen.go
+generate:
+  models: true
+  client: true

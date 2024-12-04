@@ -70,7 +70,7 @@ func TestUpdateAccount(t *testing.T) {
 			return false, err
 		}
 		return true, nil
-	})
+	}) // TODO change to new approcah sqlc //https://sqlc.dev/
 
 	// ASSERT
 	require.NoError(t, err)
