@@ -10,8 +10,6 @@ import (
 
 	"github.com/oklog/run"
 
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-
 	"github.com/go-chi/chi/v5"
 
 	"github.com/go-chi/chi/v5/middleware"
@@ -33,7 +31,7 @@ func (s *Server) Run() error {
 	rootRouter.Mount("/api", s.registerServer(apiRouter))
 	s.server = &http.Server{
 		Addr:              s.addr,
-		Handler:           promhttp.Handler(),
+		Handler:           s.registerServer(rootRouter),
 		ReadHeaderTimeout: 5 * time.Second, // TODO make configurable
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      10 * time.Second,

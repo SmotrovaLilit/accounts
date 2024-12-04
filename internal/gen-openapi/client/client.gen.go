@@ -19,9 +19,8 @@ import (
 
 // Defines values for Currency.
 const (
-	CURRENCYEUR         Currency = "CURRENCY_EUR"
-	CURRENCYUNSPECIFIED Currency = "CURRENCY_UNSPECIFIED"
-	CURRENCYUSD         Currency = "CURRENCY_USD"
+	CURRENCYEUR Currency = "CURRENCY_EUR"
+	CURRENCYUSD Currency = "CURRENCY_USD"
 )
 
 // Account defines model for Account.

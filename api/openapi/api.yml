@@ -6,9 +6,9 @@ info:
     AccountService manages accounts, including account creation, balance top-ups,
     funds transfer, and querying account information.
 servers:
-  - url: https://api.example.com/v1beta1 // Change this
+  - url: https://api.example.com
     description: Production server
-  - url: http://localhost:8080/v1beta1
+  - url: http://localhost:8080
     description: Development server
 paths:
   /accounts:

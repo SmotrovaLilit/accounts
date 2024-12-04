@@ -42,7 +42,7 @@ func main() {
 
 	// TODO move part of this logic to a common package because implementation
 	// of running and gracefully shutting down a server is common for different microservices
-	//prometheus.RunWithGroup(g, fmt.Sprintf(":%d", conf.Prometheus.Port))
+	// prometheus.RunWithGroup(g, fmt.Sprintf(":%d", conf.Prometheus.Port))
 	// grpcserver.RunWithGroup(g,
 	//	fmt.Sprintf("%s:%d", conf.Service.Host, conf.Service.Port),
 	//	func(server *grpc.Server) {

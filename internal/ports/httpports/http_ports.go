@@ -9,6 +9,7 @@ import (
 	"accounts/internal/gen-openapi/server"
 	"errors"
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"net/http"
 
 	"github.com/go-chi/render"
@@ -43,7 +44,7 @@ func (h Server) CreateAccount(w http.ResponseWriter, r *http.Request) {
 		respondWithError(err, w, r)
 		return
 	}
-	currency, err := toCurrency(string(*requestData.Currency))
+	currency, err := toCurrency(*requestData.Currency)
 	if err != nil {
 		respondWithError(err, w, r)
 		return
@@ -62,7 +63,7 @@ func (h Server) CreateAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Server) GetAccount(w http.ResponseWriter, r *http.Request) {
-	id, err := account.NewID(r.URL.Query().Get("id"))
+	id, err := account.NewID(chi.URLParam(r, "id"))
 	if err != nil {
 		respondWithError(err, w, r)
 		return
@@ -101,11 +102,11 @@ func toResponseCurrency(currency account.Currency) server.Currency {
 	}
 }
 
-func toCurrency(currency string) (account.Currency, error) {
+func toCurrency(currency server.Currency) (account.Currency, error) {
 	switch currency {
-	case "USD":
+	case server.CURRENCYUSD:
 		return account.CurrencyUSD, nil
-	case "EUR":
+	case server.CURRENCYEUR:
 		return account.CurrencyEUR, nil
 	default:
 		return account.Currency{}, errors.New("invalid currency")

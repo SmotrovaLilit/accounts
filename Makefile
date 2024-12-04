@@ -6,3 +6,14 @@ migrate:
 
 build-binary:
 	go build -o bin/main cmd/main.go
+
+image:
+	docker build -t gcr.io/dsxack/accounts:latest .
+	docker push gcr.io/dsxack/accounts:latest
+
+
+ssh:
+	@ssh dmitriysmotrov@34.32.31.67
+
+deploy:
+	cd deployment && docker compose up -d

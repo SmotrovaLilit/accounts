@@ -1,13 +1,13 @@
 ### Create account
-POST http://localhost:8010/api/v1/account
+POST http://34.32.31.67:8010/api/accounts
 Content-Type: application/json
 
 {
   "id": "9223E43C-3E28-47E9-9B86-EB49B71DFA07",
   "owner_id": "90BA52F8-430A-4091-A44E-ADC7104A34C8",
-  "currency": "CURRENCY_USD",
+  "currency": "CURRENCY_USD"
 }
 
 
 ### Get account
-GET http://localhost:8010/api/v1/account/9223E43C-3E28-47E9-9B86-EB49B71DFA07
+GET http://34.32.31.67:8010/api/accounts/9223E43C-3E28-47E9-9B86-EB49B71DFA07
