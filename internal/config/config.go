@@ -19,6 +19,7 @@ type Prometheus struct {
 
 type Config struct {
 	Service     Service    `mapstructure:"service" validate:"required"`
+	HTTPService Service    `mapstructure:"http_service" validate:"required"`
 	Prometheus  Prometheus `mapstructure:"prometheus" validate:"required"`
 	DatabaseDSN string     `mapstructure:"database_dsn" validate:"required,url"`
 }

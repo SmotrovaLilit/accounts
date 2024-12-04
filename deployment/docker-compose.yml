@@ -8,6 +8,7 @@ services:
     ports:
       - "50055:50055"
       - "9099:9099"
+      - "8010:8010"
     volumes:
       - ./config.yml:/root/config.yml
     restart: unless-stopped

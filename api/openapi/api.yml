@@ -59,6 +59,7 @@ paths:
       responses:
         '204':
           description: Funds transferred successfully
+
   /accounts/{id}:
     get:
       summary: Get account details
@@ -93,7 +94,6 @@ components:
     Currency:
       type: string
       enum:
-        - CURRENCY_UNSPECIFIED
         - CURRENCY_USD
         - CURRENCY_EUR
     TopUpAccountRequest:
@@ -127,6 +127,7 @@ components:
           description: Identifier of the account to retrieve
     Account:
       type: object
+      required: [id, owner_id, currency, balance, created_at, updated_at]
       properties:
         id:
           type: string

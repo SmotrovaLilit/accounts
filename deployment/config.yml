@@ -1,6 +1,9 @@
 service:
   host: "0.0.0.0"
   port: 50055
+http_service:
+  host: "0.0.0.0"
+  port: 8010
 prometheus:
   port: 9099
 database_dsn: "postgres://myuser:mypassword@postgres:5432/mydatabase?sslmode=disable"

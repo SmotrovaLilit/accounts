@@ -1,4 +1,4 @@
-package ports
+package grpcports
 
 import (
 	"context"
@@ -17,21 +17,21 @@ import (
 	pb "accounts/internal/gen-proto/accountservice/v1beta"
 )
 
-// GRPCServer is a gRPC server.
-type GRPCServer struct {
+// Server is a gRPC server.
+type Server struct {
 	app app.Application
 	pb.UnimplementedAccountServiceServer
 }
 
 // NewGRPCServer creates a new gRPC server.
-func NewGRPCServer(application app.Application) GRPCServer {
-	return GRPCServer{
+func NewGRPCServer(application app.Application) Server {
+	return Server{
 		app: application,
 	}
 }
 
 // CreateAccount creates an account.
-func (s GRPCServer) CreateAccount(ctx context.Context, r *pb.CreateAccountRequest) (*pb.CreateAccountResponse, error) {
+func (s Server) CreateAccount(ctx context.Context, r *pb.CreateAccountRequest) (*pb.CreateAccountResponse, error) {
 	id, err := account.NewID(r.Id)
 	if err != nil {
 		return nil, toGrpcError(err)
@@ -56,7 +56,7 @@ func (s GRPCServer) CreateAccount(ctx context.Context, r *pb.CreateAccountReques
 }
 
 // GetAccount gets an account.
-func (s GRPCServer) GetAccount(ctx context.Context, r *pb.GetAccountRequest) (*pb.GetAccountResponse, error) {
+func (s Server) GetAccount(ctx context.Context, r *pb.GetAccountRequest) (*pb.GetAccountResponse, error) {
 	id, err := account.NewID(r.Id)
 	if err != nil {
 		return nil, toGrpcError(err)
@@ -78,7 +78,7 @@ func (s GRPCServer) GetAccount(ctx context.Context, r *pb.GetAccountRequest) (*p
 }
 
 // TopUpAccount tops up an account.
-func (s GRPCServer) TopUpAccount(ctx context.Context, r *pb.TopUpAccountRequest) (*pb.TopUpAccountResponse, error) {
+func (s Server) TopUpAccount(ctx context.Context, r *pb.TopUpAccountRequest) (*pb.TopUpAccountResponse, error) {
 	id, err := account.NewID(r.Id)
 	if err != nil {
 		return nil, toGrpcError(err)
@@ -93,7 +93,7 @@ func (s GRPCServer) TopUpAccount(ctx context.Context, r *pb.TopUpAccountRequest)
 	return &pb.TopUpAccountResponse{}, nil
 }
 
-func (s GRPCServer) TransferFunds(ctx context.Context, r *pb.TransferFundsRequest) (*pb.TransferFundsResponse, error) {
+func (s Server) TransferFunds(ctx context.Context, r *pb.TransferFundsRequest) (*pb.TransferFundsResponse, error) {
 	fromID, err := account.NewID(r.FromAccountId)
 	if err != nil {
 		return nil, toGrpcError(err)

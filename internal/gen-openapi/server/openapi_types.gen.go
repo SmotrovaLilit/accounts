@@ -17,20 +17,20 @@ const (
 // Account defines model for Account.
 type Account struct {
 	// Balance Current balance of the account, in cents
-	Balance *int64 `json:"balance,omitempty"`
+	Balance int64 `json:"balance"`
 
 	// CreatedAt Date the account was created
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	Currency  *Currency  `json:"currency,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
+	Currency  Currency  `json:"currency"`
 
 	// Id Unique identifier of the account
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 
 	// OwnerId Identifier of the account's owner
-	OwnerId *string `json:"owner_id,omitempty"`
+	OwnerId string `json:"owner_id"`
 
 	// UpdatedAt Date the account was last updated
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // CreateAccountRequest defines model for CreateAccountRequest.

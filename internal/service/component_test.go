@@ -1,6 +1,7 @@
 package service
 
 import (
+	grpc2 "accounts/internal/ports/grpc"
 	"context"
 	"log"
 	"os"
@@ -18,7 +19,6 @@ import (
 	"accounts/internal/common/testhelpers"
 	"accounts/internal/config"
 	pb "accounts/internal/gen-proto/accountservice/v1beta"
-	"accounts/internal/ports"
 )
 
 const accountServiceAddr = "localhost:8091"
@@ -295,7 +295,7 @@ func startService() (func(), bool) {
 	grpcserver.RunWithGroup(&g,
 		accountServiceAddr,
 		func(server *grpc.Server) {
-			svc := ports.NewGRPCServer(app)
+			svc := grpc2.NewGRPCServer(app)
 			reflection.Register(server)
 			pb.RegisterAccountServiceServer(server, svc)
 		},

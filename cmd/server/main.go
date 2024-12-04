@@ -1,26 +1,25 @@
 package main
 
 import (
+	"accounts/internal/common/server/httpserver"
+	"accounts/internal/ports/httpports"
 	"context"
 	"fmt"
 	"log"
 	"log/slog"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
-	_ "github.com/lib/pq"
-	"github.com/oklog/run"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
+	"github.com/go-chi/chi/v5"
 
 	"accounts/internal/common/logging"
-	"accounts/internal/common/prometheus"
-	"accounts/internal/common/server/grpcserver"
 	"accounts/internal/config"
-	pb "accounts/internal/gen-proto/accountservice/v1beta"
-	"accounts/internal/ports"
 	"accounts/internal/service"
+
+	_ "github.com/lib/pq"
+	"github.com/oklog/run"
 )
 
 func main() {
@@ -43,15 +42,21 @@ func main() {
 
 	// TODO move part of this logic to a common package because implementation
 	// of running and gracefully shutting down a server is common for different microservices
-	prometheus.RunWithGroup(g, fmt.Sprintf(":%d", conf.Prometheus.Port))
-	grpcserver.RunWithGroup(g,
-		fmt.Sprintf("%s:%d", conf.Service.Host, conf.Service.Port),
-		func(server *grpc.Server) {
-			svc := ports.NewGRPCServer(application)
-			reflection.Register(server)
-			pb.RegisterAccountServiceServer(server, svc)
-		},
-	)
+	//prometheus.RunWithGroup(g, fmt.Sprintf(":%d", conf.Prometheus.Port))
+	// grpcserver.RunWithGroup(g,
+	//	fmt.Sprintf("%s:%d", conf.Service.Host, conf.Service.Port),
+	//	func(server *grpc.Server) {
+	//		svc := grpc2.NewGRPCServer(application)
+	//		reflection.Register(server)
+	//		pb.RegisterAccountServiceServer(server, svc)
+	//	},
+	//)
+	httpserver.RunWithGroup(g, fmt.Sprintf("%s:%d", conf.HTTPService.Host, conf.HTTPService.Port), func(router chi.Router) http.Handler {
+		svc := httpports.NewHTTPServer(application)
+		router.Post("/accounts", svc.CreateAccount)
+		router.Get("/accounts/{id}", svc.GetAccount)
+		return router
+	})
 
 	sigs := make(chan os.Signal, 1)
 	g.Add(func() error {

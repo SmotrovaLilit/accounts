@@ -1,10 +1,14 @@
 package httpserver
 
 import (
+	"context"
+	"log/slog"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/oklog/run"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -14,15 +18,21 @@ import (
 	"github.com/go-chi/cors"
 )
 
-func RunHTTPServerOnAddr(addr string, createHandler func(router chi.Router) http.Handler) error {
+type Server struct {
+	addr           string
+	server         *http.Server
+	registerServer func(router chi.Router) http.Handler
+}
+
+func (s *Server) Run() error {
 	apiRouter := chi.NewRouter()
 	setMiddlewares(apiRouter)
 
 	rootRouter := chi.NewRouter()
 	// we are mounting all APIs under /api path
-	rootRouter.Mount("/api", createHandler(apiRouter))
-	server := &http.Server{
-		Addr:              addr,
+	rootRouter.Mount("/api", s.registerServer(apiRouter))
+	s.server = &http.Server{
+		Addr:              s.addr,
 		Handler:           promhttp.Handler(),
 		ReadHeaderTimeout: 5 * time.Second, // TODO make configurable
 		ReadTimeout:       10 * time.Second,
@@ -30,7 +40,31 @@ func RunHTTPServerOnAddr(addr string, createHandler func(router chi.Router) http
 		IdleTimeout:       120 * time.Second,
 	}
 
-	return server.ListenAndServe()
+	return s.server.ListenAndServe()
+}
+
+func (s *Server) Shutdown(ctx context.Context) error {
+	slog.InfoContext(ctx, "shutting down http server gracefully")
+	err := s.server.Shutdown(ctx)
+	if err != nil {
+		slog.ErrorContext(ctx, "failed to gracefully shut down http server", slog.Any("error", err))
+		return err
+	}
+	slog.InfoContext(ctx, "http server shut down gracefully")
+	return nil
+}
+
+// RunWithGroup runs the HTTP server with the provided run.Group.
+func RunWithGroup(g *run.Group, addr string, registerServer func(router chi.Router) http.Handler) {
+	srv := Server{addr: addr, registerServer: registerServer}
+	g.Add(
+		srv.Run,
+		func(error) {
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			_ = srv.Shutdown(ctx)
+		},
+	)
 }
 
 func setMiddlewares(router *chi.Mux) {
